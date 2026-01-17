@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Dot Studio - Transformamos ideas complejas en productos digitales escalables, funcionales y estéticamente atemporales">
+    <title>Dot Studio | Diseño y Desarrollo Web</title>
+    
+    <!-- Modern Tech Stack: Tailwind + Alpine.js -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F4F3EE;
+            color: #3A3A3A;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Modern Abstract Background Pattern */
+        .bg-grid-slate {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(31, 46, 90, 0.03) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(31, 46, 90, 0.03) 1px, transparent 1px);
+            mask-image: linear-gradient(to bottom, transparent, 5%, white, 95%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, transparent, 5%, white, 95%, transparent);
+        }
+
+        /* Custom Transition Utilities not in default Tailwind */
+        .transition-cubic {
+            transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        [x-cloak] { display: none !important; }
+        
+        /* Optimized transitions */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        
+        /* Loading Screen Styles */
+        .loader-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #F4F3EE;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+        }
+        
+        .loader-container.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .loading-logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1F2E5A;
+            letter-spacing: -0.02em;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .loading-dot {
+            width: 0.625rem;
+            height: 0.625rem;
+            border-radius: 50%;
+            background-color: #1F2E5A;
+        }
+        
+        .circular-loader {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(31, 46, 90, 0.1);
+            border-top-color: #1F2E5A;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        @keyframes fillProgress {
+            0% {
+                clip-path: inset(100% 0 0 0);
+            }
+            100% {
+                clip-path: inset(0 0 0 0);
+            }
+        }
+        
+        .progress-circle {
+            width: 60px;
+            height: 60px;
+            position: relative;
+            border: 3px solid rgba(31, 46, 90, 0.1);
+            border-radius: 50%;
+            overflow: hidden;
+        }
+        
+        .progress-circle .progress-fill {
+            width: 100%;
+            height: 100%;
+            background: #1F2E5A;
+            border-radius: 50%;
+            animation: fillProgress 1.5s ease-out forwards;
+            clip-path: inset(100% 0 0 0);
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-[#1F2E5A] selection:text-white overflow-x-hidden relative" x-data="{ mobileMenu: false, isLoading: true }" x-init="setTimeout(() => { isLoading = false; }, 1800)">
+    
+    <!-- Loading Screen -->
+    <div x-show="isLoading" x-transition:leave="transition ease-out duration-500" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="loader-container" style="display: flex;" x-cloak>
+        <div class="loading-logo">
+            <span class="loading-dot"></span>
+            DOT STUDIO
+        </div>
+        <div class="progress-circle">
+            <div class="progress-fill"></div>
+        </div>
+    </div>
+
+    <!-- Navigation with Scroll State -->
+    <nav x-data="{ scrolled: false }" @scroll.window="scrolled = window.pageYOffset > 20" :class="scrolled ? 'bg-[#F4F3EE]/80 backdrop-blur-md border-[#1F2E5A]/5' : 'bg-transparent border-transparent'" class="fixed top-0 w-full z-50 border-b transition-all duration-300 transition-cubic">
+        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-2 text-lg font-semibold text-[#1F2E5A] tracking-tighter z-50 relative">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#1F2E5A]"></span>
+                DOT STUDIO
+            </a>
+
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-[#3A3A3A]/80">
+                <a href="#about" class="hover:text-[#1F2E5A] transition-colors">Nosotros</a>
+                <a href="#services" class="hover:text-[#1F2E5A] transition-colors">Servicios</a>
+                <a href="#process" class="hover:text-[#1F2E5A] transition-colors">Proceso</a>
+                <a href="#contact" class="group px-4 py-2 bg-[#1F2E5A] text-white rounded-md hover:bg-[#2F4B8F] transition-all duration-300 text-xs tracking-wide shadow-lg shadow-[#1F2E5A]/10 hover:shadow-[#1F2E5A]/20">
+                    <span class="flex items-center gap-2">
+                        CONTACTAR
+                        <iconify-icon icon="lucide:arrow-up-right" width="16" height="16" class="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300"></iconify-icon>
+                    </span>
+                </a>
+            </div>
+
+            <!-- Mobile Menu Toggle -->
+            <button @click="mobileMenu = !mobileMenu" class="md:hidden z-50 text-[#1F2E5A] focus:outline-none -ml-4 mr-5">
+                <iconify-icon :icon="mobileMenu ? 'lucide:x' : 'lucide:menu'" width="24" height="24" class="transition-all duration-300"></iconify-icon>
+            </button>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div x-show="mobileMenu" x-transition class="absolute top-0 left-0 w-full h-screen bg-[#F4F3EE] flex flex-col justify-center items-center gap-8 md:hidden z-40" x-cloak>
+            <template x-for="link in [{href: '#about', text: 'Nosotros'}, {href: '#services', text: 'Servicios'}, {href: '#process', text: 'Proceso'}]" :key="link.href">
+                <a @click="mobileMenu = false" :href="link.href" class="text-2xl font-medium text-[#1F2E5A] tracking-tight" x-text="link.text"></a>
+            </template>
+            <a @click="mobileMenu = false" href="#contact" class="px-8 py-3 bg-[#1F2E5A] text-white rounded-lg text-lg">Contactar</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="min-h-[90vh] flex flex-col justify-center pt-32 pb-20 relative overflow-hidden">
+        <!-- Modern Grid Background -->
+        <div class="absolute inset-0 bg-grid-slate pointer-events-none -z-10"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-tr from-[#2F4B8F]/10 to-transparent rounded-full blur-[100px] -z-10"></div>
+
+        <div class="max-w-6xl mx-auto px-6 w-full" x-data="{ shown: false }" x-init="setTimeout(() => shown = true, 100)">
+            <div class="text-center max-w-4xl mx-auto">
+                <!-- Headline -->
+                <h1 class="text-5xl md:text-8xl font-semibold tracking-tighter text-[#1F2E5A] mb-8 leading-[0.95] text-balance transition-all duration-1000 delay-100 transform translate-y-8 opacity-0" :class="shown && '!translate-y-0 !opacity-100'">
+                    Diseñamos la lógica <br> de tu negocio digital.
+                </h1>
+
+                <!-- Subheadline -->
+                <p class="text-lg md:text-xl text-[#3A3A3A]/70 max-w-2xl mx-auto mb-12 leading-relaxed font-light text-pretty transition-all duration-1000 delay-300 transform translate-y-8 opacity-0" :class="shown && '!translate-y-0 !opacity-100'">
+                    Transformamos ideas complejas en productos digitales escalables, funcionales y estéticamente atemporales.
+                </p>
+
+                <!-- CTA Buttons -->
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 transition-all duration-1000 delay-500 transform translate-y-8 opacity-0" :class="shown && '!translate-y-0 !opacity-100'">
+                    <a href="#contact" class="w-full sm:w-auto px-8 py-3.5 bg-[#1F2E5A] text-white rounded-lg hover:bg-[#2F4B8F] hover:shadow-xl hover:shadow-[#1F2E5A]/20 hover:-translate-y-1 transition-all duration-300 text-sm font-medium flex items-center justify-center gap-2 group">
+                        Iniciar Proyecto
+                        <iconify-icon icon="lucide:arrow-right" width="16" height="16" class="group-hover:translate-x-1 transition-transform"></iconify-icon>
+                    </a>
+                    <a href="#services" class="w-full sm:w-auto px-8 py-3.5 bg-white border border-[#2F4B8F]/10 text-[#1F2E5A] rounded-lg hover:bg-gray-50 hover:border-[#2F4B8F]/30 transition-all duration-300 text-sm font-medium flex items-center justify-center shadow-sm">
+                        Explorar Servicios
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section with Intersection Observer -->
+    <section id="about" class="py-24 md:py-32 border-t border-[#1F2E5A]/5">
+        <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-20 items-center">
+            <div x-data="{ shown: false }" x-intersect.threshold.20="shown = true" class="transition-all duration-1000 transform opacity-0 translate-y-12" :class="shown && '!opacity-100 !translate-y-0'">
+                <h2 class="text-xs font-semibold tracking-[0.2em] text-[#2F4B8F] uppercase mb-4">La Filosofía</h2>
+                <h3 class="text-3xl md:text-4xl font-semibold text-[#1F2E5A] tracking-tight mb-6 text-balance">
+                    Reducimos el ruido. <br> Maximizamos el impacto.
+                </h3>
+                <div class="space-y-6 text-[#3A3A3A]/80 font-light leading-relaxed text-pretty">
+                    <p>
+                        En un ecosistema digital saturado, la claridad es la moneda más valiosa. No somos una agencia tradicional; somos un partner tecnológico que entiende que el diseño sin funcionalidad es solo decoración.
+                    </p>
+                    <p>
+                        Utilizamos metodologías ágiles y stacks tecnológicos modernos para construir herramientas que no solo se ven bien, sino que escalan con tu negocio.
+                    </p>
+                </div>
+                
+                <div class="mt-8 flex gap-8">
+                    <div>
+                        <span class="block text-3xl font-semibold text-[#1F2E5A] tracking-tighter">50+</span>
+                        <span class="text-xs text-[#3A3A3A]/50 uppercase tracking-wide">Proyectos</span>
+                    </div>
+                    <div>
+                        <span class="block text-3xl font-semibold text-[#1F2E5A] tracking-tighter">98%</span>
+                        <span class="text-xs text-[#3A3A3A]/50 uppercase tracking-wide">Retención</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modern Card with hover effect -->
+            <div x-data="{ shown: false }" x-intersect.threshold.20="shown = true" class="relative group transition-all duration-1000 delay-200 transform opacity-0 translate-x-12" :class="shown && '!opacity-100 !translate-x-0'">
+                <div class="absolute inset-0 bg-gradient-to-br from-[#1F2E5A]/5 to-[#2F4B8F]/5 transform rotate-3 rounded-2xl transition-transform duration-500 group-hover:rotate-6"></div>
+                <div class="relative bg-white p-10 rounded-2xl border border-[#1F2E5A]/5 shadow-xl shadow-[#1F2E5A]/5">
+                    <div class="flex flex-col gap-8">
+                        <template x-for="(feature, idx) in [
+                            {icon: 'lucide:layers', title: 'Arquitectura Escalable', desc: 'Código limpio y modular preparado para crecer.'},
+                            {icon: 'lucide:sparkles', title: 'Diseño UI/UX Premium', desc: 'Interfaces intuitivas que deleitan al usuario.'}
+                        ]" :key="feature.title">
+                            <div :class="idx > 0 && 'mt-8 border-t border-[#1F2E5A]/10 pt-8'">
+                                <div class="flex items-start gap-5">
+                                    <div class="p-3 bg-[#F4F3EE] rounded-xl text-[#1F2E5A] shrink-0">
+                                        <iconify-icon :icon="feature.icon" width="24" height="24"></iconify-icon>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-[#1F2E5A] mb-1" x-text="feature.title"></h4>
+                                        <p class="text-sm text-[#3A3A3A]/60 leading-relaxed" x-text="feature.desc"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section (Bento Grid Layout) -->
+    <section id="services" class="py-24 md:py-32 bg-white relative">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="max-w-2xl mb-16" x-data="{ shown: false }" x-intersect.threshold.20="shown = true">
+                <h2 class="text-xs font-semibold tracking-[0.2em] text-[#2F4B8F] uppercase mb-4">Nuestra Expertise</h2>
+                <h3 class="text-3xl md:text-5xl font-semibold text-[#1F2E5A] tracking-tighter text-balance transition-all duration-700 opacity-0 translate-y-8" :class="shown && '!opacity-100 !translate-y-0'">
+                    Soluciones de ingeniería <br> creativa.
+                </h3>
+            </div>
+
+            <!-- Bento Grid - Adjusted for flexible row heights -->
+            <div class="grid md:grid-cols-3 gap-6">
+                
+                <!-- Large Card -->
+                <div class="md:col-span-2 group p-10 bg-[#F4F3EE] rounded-2xl border border-transparent hover:border-[#2F4B8F]/10 transition-all duration-500 relative overflow-hidden min-h-[300px]" x-data="{ shown: false }" x-intersect.threshold.10="shown = true" :class="shown && 'opacity-100 translate-y-0' || 'opacity-0 translate-y-8'">
+                    <div class="absolute top-0 right-0 p-10 opacity-10 group-hover:opacity-20 transition-opacity duration-500">
+                        <iconify-icon icon="lucide:monitor" width="180" height="180"></iconify-icon>
+                    </div>
+                    <div class="relative z-10 h-full flex flex-col justify-between">
+                        <div class="p-3 bg-white w-fit rounded-lg text-[#1F2E5A] mb-4 shadow-sm">
+                            <iconify-icon icon="lucide:globe" width="24" height="24"></iconify-icon>
+                        </div>
+                        <div>
+                            <h4 class="text-2xl font-semibold text-[#1F2E5A] mb-3 tracking-tight">Desarrollo Web &amp; Apps</h4>
+                            <p class="text-[#3A3A3A]/70 leading-relaxed font-light max-w-md">
+                                Construimos aplicaciones web progresivas (PWA), sitios corporativos y plataformas SaaS utilizando las últimas tecnologías del mercado.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tall Card -->
+                <div class="md:row-span-2 group p-10 bg-[#1F2E5A] rounded-2xl transition-all duration-500 relative overflow-hidden text-white h-full" x-data="{ shown: false }" x-intersect.threshold.10="shown = true" :class="shown && 'opacity-100 translate-y-0' || 'opacity-0 translate-y-8'" style="transition-delay: 100ms;">
+                    <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
+                    <div class="relative z-10 h-full flex flex-col">
+                        <div class="p-3 bg-white/10 w-fit rounded-lg text-white mb-4 backdrop-blur-sm">
+                            <iconify-icon icon="lucide:shopping-cart" width="24" height="24"></iconify-icon>
+                        </div>
+                        <div>
+                            <h4 class="text-2xl font-semibold text-white mb-3 tracking-tight">E-commerce Avanzado</h4>
+                            <p class="text-white/70 leading-relaxed font-light mb-6">
+                                Tiendas online diseñadas para convertir. Integraciones de pago complejas, gestión de inventario y optimización de funnel.
+                            </p>
+                            <ul class="space-y-3 text-sm text-white/60">
+                                <template x-for="item in ['Shopify / WooCommerce', 'Pasarelas de Pago', 'Automatización']" :key="item">
+                                    <li class="flex items-center gap-2">
+                                        <iconify-icon icon="lucide:check" width="16" height="16" class="text-white"></iconify-icon>
+                                        <span x-text="item"></span>
+                                    </li>
+                                </template>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <template x-for="(card, idx) in [
+                    {icon: 'lucide:smartphone', title: 'Diseño UI/UX', desc: 'Prototipado de alta fidelidad y sistemas de diseño.'},
+                    {icon: 'lucide:bar-chart-3', title: 'SEO Técnico', desc: 'Optimización de rendimiento y posicionamiento.'}
+                ]" :key="card.title">
+                    <div class="group p-6 bg-white border border-[#1F2E5A]/5 rounded-2xl hover:shadow-lg hover:shadow-[#1F2E5A]/5 transition-all duration-500 h-full flex flex-col" x-data="{ shown: false }" x-intersect.threshold.10="shown = true" :class="shown && 'opacity-100 translate-y-0' || 'opacity-0 translate-y-8'" :style="`transition-delay: ${(idx + 2) * 100}ms`">
+                        <div class="p-3 bg-[#F4F3EE] w-fit rounded-lg text-[#1F2E5A] mb-4 group-hover:scale-110 transition-transform duration-300">
+                            <iconify-icon :icon="card.icon" width="24" height="24"></iconify-icon>
+                        </div>
+                        <h4 class="text-lg font-semibold text-[#1F2E5A] mb-2 tracking-tight" x-text="card.title"></h4>
+                        <p class="text-sm text-[#3A3A3A]/70 leading-relaxed font-light" x-text="card.desc"></p>
+                    </div>
+                </template>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Section -->
+    <section id="process" class="py-24 md:py-32 border-t border-[#1F2E5A]/5 bg-[#FAFAF9]">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-24">
+                <h2 class="text-xs font-semibold tracking-[0.2em] text-[#2F4B8F] uppercase mb-4">El Método</h2>
+                <h3 class="text-3xl md:text-4xl font-semibold text-[#1F2E5A] tracking-tighter">
+                    Precisión en cada etapa.
+                </h3>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-12 relative">
+                <!-- Line -->
+                <div class="hidden md:block absolute top-12 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#1F2E5A]/10 to-transparent z-0"></div>
+
+                <template x-for="(step, index) in [
+                    { num: '01', title: 'Discovery', desc: 'Inmersión profunda en tu modelo de negocio y objetivos.' },
+                    { num: '02', title: 'Building', desc: 'Desarrollo iterativo con feedback constante y transparente.' },
+                    { num: '03', title: 'Launch', desc: 'Despliegue seguro, pruebas de QA y formación al equipo.' }
+                ]">
+                    <div class="relative z-10 flex flex-col items-center text-center group" x-data="{ shown: false }" x-intersect.threshold.50="shown = true" :class="shown && 'opacity-100 translate-y-0' || 'opacity-0 translate-y-8'" :style="`transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${index * 150}ms`">
+                        <div class="w-24 h-24 bg-white border border-[#1F2E5A]/10 rounded-2xl flex items-center justify-center mb-8 shadow-sm group-hover:-translate-y-2 transition-transform duration-300">
+                            <span class="text-2xl font-bold text-[#1F2E5A]" x-text="step.num"></span>
+                        </div>
+                        <h4 class="text-xl font-semibold text-[#1F2E5A] mb-3 tracking-tight" x-text="step.title"></h4>
+                        <p class="text-sm text-[#3A3A3A]/70 leading-relaxed font-light max-w-[260px] text-pretty" x-text="step.desc"></p>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact / Footer -->
+    <footer id="contact" class="bg-[#1F2E5A] text-[#F4F3EE] pt-24 pb-12 relative overflow-hidden">
+        <!-- Abstract Decoration -->
+        <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-[#2F4B8F] rounded-full blur-[120px] opacity-20 pointer-events-none"></div>
+
+        <div class="max-w-6xl mx-auto px-6 relative z-10">
+            <div class="grid md:grid-cols-2 gap-16 mb-24">
+                <div>
+                    <h2 class="text-4xl md:text-6xl font-semibold tracking-tighter mb-8 leading-tight">
+                        Construyamos algo <br> extraordinario.
+                    </h2>
+                    <p class="text-white/60 text-lg font-light mb-10 max-w-md">
+                        ¿Tienes un proyecto en mente? Estamos listos para escuchar tu visión y convertirla en realidad digital.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="mailto:hola@dotstudio.com" class="px-8 py-4 bg-white text-[#1F2E5A] rounded-lg hover:bg-[#F4F3EE] transition-all duration-300 font-medium text-sm flex items-center justify-center gap-2">
+                            <iconify-icon icon="lucide:mail" width="16" height="16"></iconify-icon>
+                            hola@dotstudio.com
+                        </a>
+                        <a href="#" class="px-8 py-4 border border-white/10 text-white rounded-lg hover:bg-white/5 transition-all duration-300 font-medium text-sm flex items-center justify-center">
+                            Agendar Discovery Call
+                        </a>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-8 text-sm">
+                    <div>
+                        <h4 class="font-medium text-white mb-6">Servicios</h4>
+                        <ul class="space-y-4 text-white/50 font-light">
+                            <template x-for="item in ['Web Development', 'App Design', 'E-commerce', 'Consultoría']" :key="item">
+                                <li><a href="#" class="hover:text-white transition-colors" x-text="item"></a></li>
+                            </template>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-medium text-white mb-6">Social</h4>
+                        <ul class="space-y-4 text-white/50 font-light">
+                            <template x-for="social in [{icon: 'lucide:instagram', name: 'Instagram'}, {icon: 'lucide:twitter', name: 'Twitter / X'}, {icon: 'lucide:linkedin', name: 'LinkedIn'}]" :key="social.name">
+                                <li>
+                                    <a href="#" class="hover:text-white transition-colors flex items-center gap-2">
+                                        <iconify-icon :icon="social.icon" width="16" height="16"></iconify-icon>
+                                        <span x-text="social.name"></span>
+                                    </a>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/40 font-light">
+                <p>© <span x-text="new Date().getFullYear()"></span> Dot Studio Inc. All rights reserved.</p>
+                <div class="flex gap-6">
+                    <a href="#" class="hover:text-white transition-colors">Política de Privacidad</a>
+                    <a href="#" class="hover:text-white transition-colors">Términos de Servicio</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+</body></html>
