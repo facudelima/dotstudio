@@ -102,7 +102,7 @@ Este proyecto es privado y pertenece a Dot Studio.
 
 **Dot Studio**
 - Email: hola@dotstudio.com
-- Website: [Próximamente]
+- Website: https://dotstudio-uy.vercel.app/
 
 ---
 
