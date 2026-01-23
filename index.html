@@ -15,11 +15,25 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
         
+        * {
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+        }
+        
         body {
             font-family: 'Inter', sans-serif;
             background-color: #F4F3EE;
             color: #3A3A3A;
             -webkit-font-smoothing: antialiased;
+            width: 100vw;
+            min-width: 100%;
         }
 
         /* Modern Abstract Background Pattern */
@@ -52,15 +66,19 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            right: 0;
+            bottom: 0;
+            width: 100vw;
+            height: 100vh;
             background-color: #F4F3EE;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 9999;
             transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         
         .loader-container.hidden {
@@ -68,64 +86,53 @@
             visibility: hidden;
         }
         
-        .loading-logo {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #1F2E5A;
-            letter-spacing: -0.02em;
-            margin-bottom: 2rem;
+        .logo-loader-wrapper {
+            position: relative;
+            width: 102px;
+            height: 102px;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            justify-content: center;
+            margin: 0;
+            padding: 0;
         }
         
-        .loading-dot {
-            width: 0.625rem;
-            height: 0.625rem;
+        .logo-loader-image {
+            width: 55px;
+            height: 34px;
+            object-fit: contain;
+            z-index: 3;
+            position: relative;
+        }
+        
+        .logo-circle-container {
+            position: absolute;
+            width: 102px;
+            height: 102px;
             border-radius: 50%;
-            background-color: #1F2E5A;
+            background: rgba(31, 46, 90, 0.1);
+            z-index: 1;
+            overflow: hidden;
         }
         
-        .circular-loader {
-            width: 60px;
-            height: 60px;
-            border: 3px solid rgba(31, 46, 90, 0.1);
-            border-top-color: #1F2E5A;
+        .logo-circle-fill {
+            position: absolute;
+            width: 102px;
+            height: 102px;
             border-radius: 50%;
-            animation: spin 1s linear infinite;
+            background: #1F2E5A;
+            clip-path: inset(100% 0 0 0);
+            animation: fillCircleBottomUp 1.5s ease-out forwards;
+            z-index: 2;
         }
         
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-        
-        @keyframes fillProgress {
+        @keyframes fillCircleBottomUp {
             0% {
                 clip-path: inset(100% 0 0 0);
             }
             100% {
-                clip-path: inset(0 0 0 0);
+                clip-path: inset(0% 0 0 0);
             }
-        }
-        
-        .progress-circle {
-            width: 60px;
-            height: 60px;
-            position: relative;
-            border: 3px solid rgba(31, 46, 90, 0.1);
-            border-radius: 50%;
-            overflow: hidden;
-        }
-        
-        .progress-circle .progress-fill {
-            width: 100%;
-            height: 100%;
-            background: #1F2E5A;
-            border-radius: 50%;
-            animation: fillProgress 1.5s ease-out forwards;
-            clip-path: inset(100% 0 0 0);
         }
     </style>
 </head>
@@ -133,21 +140,21 @@
     
     <!-- Loading Screen -->
     <div x-show="isLoading" x-transition:leave="transition ease-out duration-500" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="loader-container" style="display: flex;" x-cloak>
-        <div class="loading-logo">
-            <span class="loading-dot"></span>
-            DOT STUDIO
-        </div>
-        <div class="progress-circle">
-            <div class="progress-fill"></div>
+        <div class="logo-loader-wrapper">
+            <!-- Circle Container -->
+            <div class="logo-circle-container">
+                <div class="logo-circle-fill"></div>
+            </div>
+            <!-- Logo Image -->
+            <img src="dotlogo.png" alt="Dot Studio Logo" class="logo-loader-image">
         </div>
     </div>
 
     <!-- Navigation with Scroll State -->
-    <nav x-data="{ scrolled: false }" @scroll.window="scrolled = window.pageYOffset > 20" :class="scrolled ? 'bg-[#F4F3EE]/80 backdrop-blur-md border-[#1F2E5A]/5' : 'bg-transparent border-transparent'" class="fixed top-0 w-full z-50 border-b transition-all duration-300 transition-cubic">
-        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-            <a href="#" class="flex items-center gap-2 text-lg font-semibold text-[#1F2E5A] tracking-tighter z-50 relative">
-                <span class="w-2.5 h-2.5 rounded-full bg-[#1F2E5A]"></span>
-                DOT STUDIO
+    <nav x-data="{ scrolled: false }" @scroll.window="scrolled = window.pageYOffset > 20" :class="scrolled ? 'bg-[#F4F3EE]/80 backdrop-blur-md border-[#1F2E5A]/5' : 'bg-transparent border-transparent'" class="fixed top-0 left-0 right-0 w-full z-50 border-b transition-all duration-300 transition-cubic">
+        <div class="w-full mx-auto px-8 bg-transparent flex items-center justify-between" style="height: 60px;">
+            <a href="#" class="flex items-center z-50 relative">
+                <img src="dotstudio.png" alt="Dot Studio" class="h-5" style="width: 153.28px; height: 18.76px;">
             </a>
 
             <!-- Desktop Menu -->
@@ -164,8 +171,8 @@
             </div>
 
             <!-- Mobile Menu Toggle -->
-            <button @click="mobileMenu = !mobileMenu" class="md:hidden z-50 text-[#1F2E5A] focus:outline-none -ml-4 mr-5">
-                <iconify-icon :icon="mobileMenu ? 'lucide:x' : 'lucide:menu'" width="24" height="24" class="transition-all duration-300"></iconify-icon>
+            <button @click="mobileMenu = !mobileMenu" class="md:hidden z-50 bg-[#1F2E5A] text-white focus:outline-none rounded-md flex items-center justify-center" style="width: 38px; height: 36px;">
+                <iconify-icon :icon="mobileMenu ? 'lucide:x' : 'lucide:menu'" width="20" height="20" class="transition-all duration-300"></iconify-icon>
             </button>
         </div>
 
