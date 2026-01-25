@@ -1,4 +1,4 @@
-# Dot Studio
+# Dot Studio 
 
 Sitio web moderno y responsivo para Dot Studio, una agencia especializada en transformar ideas complejas en productos digitales escalables, funcionales y estéticamente atemporales.
 
